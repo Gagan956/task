@@ -1,0 +1,57 @@
+import express from "express";
+import  "dotenv/config";
+import { connectDB } from "./config/DB.js";
+import cors from "cors";
+import todoRouter from "./routers/todoRouter.js"
+import  Server from 'http';
+
+
+//connect to db
+connectDB();
+//middleware
+const app = express();
+app.use(cors({
+    origin: " http://localhost:5173",
+    credentials: true,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+}));
+app.use(express.json());
+
+//routes
+app.use("/api/todos", todoRouter);
+
+
+//start server
+const PORT = process.env.PORT || 5000;
+const server = app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+
+// Exit handler
+const exitHandler = () => {
+  if (server) {
+    server.close(() => {
+      console.log('Server closed');
+      process.exit(1);
+    });
+  } else {
+    process.exit(1);
+  }
+};
+
+// Unexpected error handler
+const unexpectedErrorHandler = (error: Error) => {
+  console.error(error);
+  exitHandler();
+};
+
+process.on('uncaughtException', unexpectedErrorHandler);
+process.on('unhandledRejection', unexpectedErrorHandler);
+
+process.on('SIGTERM', () => {
+  console.info('SIGTERM received');
+  if (server) {
+    server.close();
+  }
+}); 
