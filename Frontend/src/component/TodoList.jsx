@@ -11,7 +11,7 @@ export default function TodoApp() {
   const [message, setMessage] = useState("");
   const [fetchingFromAirtable, setFetchingFromAirtable] = useState(false); // NEW
 
-  const API_URL = "http://localhost:5000/api/todos";
+  const API_URL = "https://task-ojev.onrender.com/api/todos";
 
   const fetchTodos = async () => {
     setFetchingFromAirtable(true); // NEW
